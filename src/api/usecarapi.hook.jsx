@@ -5,7 +5,7 @@ import { API_RESPONSE_STATUS, ResponseModel, useApi } from "./useapi.hook";
 
 const useCarApi = (initialUrl) => {
   const { handleAxiosPostAsync, handleAxiosGetAsync } = useApi();
-  const responseModel = new ResponseModel();
+  let responseModel = new ResponseModel();
   // const carUrl=
   const fetchCarData = async (id) => {
     try {
@@ -38,7 +38,21 @@ const useCarApi = (initialUrl) => {
     }
   };
 
-  return { fetchCarData, searchCar };
+  const getAllCars = async (id) => {
+    try {
+      responseModel = await handleAxiosGetAsync(`${END_POINT.CAR}/cars`);
+      if (
+        responseModel &&
+        responseModel.status === API_RESPONSE_STATUS.SUCCESS
+      ) {
+        return responseModel;
+      }
+    } catch (err) {
+      throw new Error(err);
+    }
+  };
+
+  return { fetchCarData, searchCar,getAllCars };
 };
 
 export default useCarApi;

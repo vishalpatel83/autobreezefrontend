@@ -18,7 +18,6 @@ const CardDetail = ({ faq, data }) => {
     data?.find((item) => item?.id === id)
   );
   const {state} = useLocation();
-  
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -27,6 +26,7 @@ const CardDetail = ({ faq, data }) => {
   useEffect(() => {
     // fetchCarDetail();
     setcarDetail(data?.find((item) => item?.id === id))
+    fetchCarDetail()
   }, [slug,data]);
 
   useEffect(() => {
@@ -34,13 +34,14 @@ const CardDetail = ({ faq, data }) => {
     if(state){
       setrentalBookData(state)
     }
+    
   }, [data,state])
   
 
   const [imageName, setimageName] = useState("")
   const [count, setcount] = useState(0)
   const [keyFeatureActiveCount, setkeyFeatureActiveCount] = useState(0)
-  const keyFeatures = carDetail?.key_feature?.split("@");
+  const [keyFeatures, setkeyFeatures] = useState([])
   useEffect(() => {
     let intervalId = setInterval(()=>{
       if(count <2){
@@ -67,7 +68,12 @@ const CardDetail = ({ faq, data }) => {
 
   async function fetchCarDetail() {
     try {
-      const data = await fetchCarData(1);
+      const res = await fetchCarData(id);
+      console.log(res)
+      if(res&&res.isSucess){
+        setcarDetail(res.data)
+        setkeyFeatures(res.data?.key_features?.split("@"))
+      }
       // console.log(data);
     } catch (error) {}
   }
@@ -88,7 +94,7 @@ const CardDetail = ({ faq, data }) => {
           <div className="row">
             <div className="col-12 col-md-6">
               <h1 className="text-theme pe-5">{carDetail?.section1_title}</h1>
-              <p className="text-secondary"> {carDetail?.section1_desc}</p>
+              <p className="text-secondary"> {carDetail?.section1_description}</p>
             </div>
             <div className="col-12 col-md-6 col-lg-6 ">
               <img
@@ -108,7 +114,7 @@ const CardDetail = ({ faq, data }) => {
             </div>
             <div className="col-12 col-md-6 pt-5">
               <h1 className="text-theme pe-5">{carDetail?.section2_title}</h1>
-              <p className="text-secondary"> {carDetail?.section2_desc}</p>
+              <p className="text-secondary"> {carDetail?.section2_description}</p>
             </div>
           </div>
         </div>

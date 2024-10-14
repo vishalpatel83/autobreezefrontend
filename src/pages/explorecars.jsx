@@ -9,9 +9,11 @@ import CheckBoxComponent from "../components/common/checkbox.component";
 import ModalComponent from "../components/common/modal.component";
 import { useDebounce } from "use-debounce";
 import { useNavigate } from "react-router-dom";
+import useCarApi from "../api/usecarapi.hook";
 
 const ExploreCars = ({ data }) => {
   const carInitialData=data
+  const {searchCar}=useCarApi()
   const [carData, setcarData] = useState(data);
   const [filterData, setfilterData] = useState({
     categories: [],
@@ -27,10 +29,11 @@ const ExploreCars = ({ data }) => {
 
   useEffect(() => {
     //first filter by search
-    const searchData=debouncedValue !== "" ?filterByKeyword(carInitialData,debouncedValue):carInitialData;
+    // const searchData=debouncedValue !== "" ?filterByKeyword(carInitialData,debouncedValue):carInitialData;
     //second filter by filter type
-    const filterByCatData=filterData.categories.length>0?filterDataByCat(searchData,filterData.categories):searchData
-    setcarData(filterByCatData)
+    // const filterByCatData=filterData.categories.length>0?filterDataByCat(searchData,filterData.categories):searchData
+    // setcarData(filterByCatData)
+    handleBindSearchCars()
   }, [debouncedValue,filterData.capacities,filterData.categories])
 
   function filterByKeyword(arr, keyword) {
@@ -80,6 +83,21 @@ const ExploreCars = ({ data }) => {
       navigate(`/${id}`);
     }
   };
+
+  const handleBindSearchCars=async()=>{
+  try {
+    const data={
+      ...filterData,
+      searchText:debouncedValue
+    }
+    const res=await searchCar(data)
+    if(res?.data){
+      setcarData(res?.data)
+    }
+  } catch (error) {
+    
+  }
+  }
   return (
     <div className="explorecar-section  bg-theme-gray">
       <Navigation />

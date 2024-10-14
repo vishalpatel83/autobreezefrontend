@@ -24,6 +24,10 @@ import SignIn from "./pages/signin";
 import SignUp from "./pages/signup";
 import AboutUs from "./pages/aboutus";
 import ProfilePage from "./pages/profile";
+import useCarApi from "./api/usecarapi.hook";
+import { useDispatch, useSelector } from "react-redux";
+import { addCars } from "./redux/car/carslice";
+import { handleNotify } from "./components/common/notification/toaster_notify.component";
 // import CarRentalBooking from "./components/CarRentalBooking";
 
 export const scroll = new SmoothScroll('a[href*="#"]', {
@@ -33,10 +37,22 @@ export const scroll = new SmoothScroll('a[href*="#"]', {
 
 const App = () => {
   const [landingPageData, setLandingPageData] = useState({});
+  const cars=useSelector(({car})=>car?.cars)
+  const dispatch=useDispatch()
+  const {getAllCars}=useCarApi()
   useEffect(() => {
-    setLandingPageData(JsonData);
+    getCars()
   }, []);
 
+  const getCars=async()=>{
+    try {
+      const res=await getAllCars()
+      if(res&&res.isSucess){
+        dispatch(addCars(res.data.cars))
+      }
+    } catch (error) {
+    }
+  }
   return (
      <>
     <Routes>
@@ -47,8 +63,8 @@ const App = () => {
             <Navigation />
             <Header data={landingPageData.Header} />
             <Brand />
-            <RentalBooking carData={landingPageData.car} />
-            <OurFleet data={landingPageData.car} />
+            <RentalBooking carData={cars} />
+            <OurFleet data={cars} />
             {/* <Features data={landingPageData.Features} /> */}
             {/* <About data={landingPageData.About} /> */}
             {/* <Services data={landingPageData.Services} /> */}
@@ -59,9 +75,9 @@ const App = () => {
           </>
         }
       />
-      <Route path="/:slug" element={<CardDetail faq={landingPageData.faq} data={landingPageData.car}/>} />
-      <Route path="/explorecars" element={<ExploreCars  data={landingPageData.car}/>} />
-      <Route path="/signin" element={<SignIn  data={landingPageData.car}/>} />
+      <Route path="/:slug" element={<CardDetail faq={landingPageData.faq} data={cars}/>} />
+      <Route path="/explorecars" element={<ExploreCars  data={cars}/>} />
+      <Route path="/signin" element={<SignIn  data={cars}/>} />
       <Route path="/signup" element={<SignUp ></SignUp>} />
       <Route path="/aboutus" element={<AboutUs/>} />
       <Route path="/profile" element={<ProfilePage/>} />

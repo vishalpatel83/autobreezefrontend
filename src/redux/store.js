@@ -1,5 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import userreducer from "./user/userreducer";
+import carreducer from "./car/carreducer"
 import {
   persistStore,
   persistReducer,
@@ -16,6 +17,7 @@ import logger from 'redux-logger'
 const rootReducer = combineReducers({
   // counter: counterReducer,
   // // other reducers...
+  car:carreducer,
   user: userreducer,
 });
 

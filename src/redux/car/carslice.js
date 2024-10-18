@@ -4,6 +4,7 @@ export const carSlice = createSlice({
   name: "cars",
   initialState: {
     cars: [],
+    bookinfo:null
   },
   reducers: {
     addCars: (state, action) => {
@@ -12,8 +13,15 @@ export const carSlice = createSlice({
         cars: action.payload,
       };
     },
+
+    addBookInfo: (state, action) => {
+      return {
+        ...state,
+        bookinfo: action.payload,
+      };
+    },
     
   },
 });
-export const { addCars } = carSlice.actions;
+export const { addCars,addBookInfo } = carSlice.actions;
 // export default userSlice.reducer;

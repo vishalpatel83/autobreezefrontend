@@ -52,6 +52,20 @@ const useCarApi = (initialUrl) => {
     }
   };
 
+   const checkCarAvaibility=async(data)=>{
+    try {
+      responseModel = await handleAxiosPostAsync(data,`${END_POINT.CAR}/checkCarAvailability`);
+      if (
+        responseModel &&
+        responseModel.status === API_RESPONSE_STATUS.SUCCESS
+      ) {
+        return responseModel;
+      }
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
+
   return { fetchCarData, searchCar,getAllCars };
 };
 

@@ -1,10 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { calculateCounts } from "../utility";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addBookInfo } from "../redux/car/carslice";
 
-const RentalBooking = ({ section, name, data ,carData,page,rentalBookData}) => {
-  const isRedirectWhatsapp=page === "detail";
-  const navigate=useNavigate()
+const RentalBooking = ({ section, name, data, carData, page, rentalBookData }) => {
+  const isRedirectWhatsapp = page === "detail";
+  const navigate = useNavigate()
   const [pickupDate, setPickupDate] = useState("");
   const [dropOffDate, setDropOffDate] = useState("");
   const [pickupTime, setPickupTime] = useState("");
@@ -15,7 +17,7 @@ const RentalBooking = ({ section, name, data ,carData,page,rentalBookData}) => {
   const [timeCount, setTimeCount] = useState(0);
   const [delivery, setDelivery] = useState(1)
   const [address, setAddress] = useState("");
-
+  const dispatch = useDispatch()
   const cars = data;
   function calculateTime(startDate, endDate, timePeriod) {
     if (startDate !== "" && endDate !== "") {
@@ -36,13 +38,11 @@ const RentalBooking = ({ section, name, data ,carData,page,rentalBookData}) => {
       return timeCount > 1 ? "Weeks" : "Week";
     }
   }, [timePeriod, timeCount]);
+  
   const handleSubmit = (e) => {
     e.preventDefault();
-    // alert(
-    //   `Car: ${selectedCar}, Pickup: ${pickupDate} ${pickupTime}, Drop-off: ${dropOffDate} ${dropOffTime}, Insurance: ${insurance}`
-    // );
-
-    const state={car:selectedCar,from:pickupDate,to:dropOffDate,pickuptime:pickupTime,dropOffTime:dropOffTime,delivery:delivery,address:address,timePeriod:timePeriod}
+    const state = { car: selectedCar, from: pickupDate, to: dropOffDate, pickuptime: pickupTime, dropOffTime: dropOffTime, delivery: delivery, address: address, timePeriod: timePeriod }
+    dispatch(addBookInfo(state))
     navigate(`/${selectedCar}`, { state: state });
   };
 
@@ -67,21 +67,21 @@ const RentalBooking = ({ section, name, data ,carData,page,rentalBookData}) => {
   };
 
   useEffect(() => {
-   if(rentalBookData){
-    const state={car:selectedCar,from:pickupDate,to:dropOffDate,pickuptime:pickupTime,dropOffTime:dropOffTime,delivery:delivery,address:address}
+    if (rentalBookData) {
+      const state = { car: selectedCar, from: pickupDate, to: dropOffDate, pickuptime: pickupTime, dropOffTime: dropOffTime, delivery: delivery, address: address }
 
-    setPickupTime(rentalBookData.pickuptime)
-    setSelectedCar(rentalBookData.car)
-    setAddress(rentalBookData.address)
-    setDelivery(rentalBookData.delivery)
-    setDropOffDate(rentalBookData.to)
-    setPickupDate(rentalBookData.from)
-    setDropOffTime(rentalBookData.dropOffTime)
-    setTimePeriod(rentalBookData.timePeriod)
-    if(rentalBookData.from){
-      calculateTime(rentalBookData.from, rentalBookData.to, rentalBookData.timePeriod);
+      setPickupTime(rentalBookData.pickuptime)
+      setSelectedCar(rentalBookData.car)
+      setAddress(rentalBookData.address)
+      setDelivery(rentalBookData.delivery)
+      setDropOffDate(rentalBookData.to)
+      setPickupDate(rentalBookData.from)
+      setDropOffTime(rentalBookData.dropOffTime)
+      setTimePeriod(rentalBookData.timePeriod)
+      if (rentalBookData.from) {
+        calculateTime(rentalBookData.from, rentalBookData.to, rentalBookData.timePeriod);
+      }
     }
-   }
   }, [rentalBookData])
 
   const generateTimeSlots = () => {
@@ -110,33 +110,30 @@ const RentalBooking = ({ section, name, data ,carData,page,rentalBookData}) => {
         <div className="brand-btn">
           <button
             type="button"
-            className={`rounded me-3 btn text-dark ${
-              timePeriod === "daily"
-                ? "btn-light"
-                : "btn-outline-default text-white"
-            }`}
+            className={`rounded me-3 btn text-dark ${timePeriod === "daily"
+              ? "btn-light"
+              : "btn-outline-default text-white"
+              }`}
             onClick={() => handleTimePeriod("daily")}
           >
             Daily
           </button>
           <button
             type="button"
-            className={`rounded me-3 btn text-dark ${
-              timePeriod === "weekly"
-                ? "btn-light"
-                : "btn-outline-default text-white"
-            }`}
+            className={`rounded me-3 btn text-dark ${timePeriod === "weekly"
+              ? "btn-light"
+              : "btn-outline-default text-white"
+              }`}
             onClick={() => handleTimePeriod("weekly")}
           >
             Weekly
           </button>
           <button
             type="button"
-            className={`rounded btn text-dark ${
-              timePeriod === "months"
-                ? "btn-light"
-                : "btn-outline-default text-white"
-            }`}
+            className={`rounded btn text-dark ${timePeriod === "months"
+              ? "btn-light"
+              : "btn-outline-default text-white"
+              }`}
             onClick={() => handleTimePeriod("months")}
           >
             Monthly
@@ -175,65 +172,65 @@ const RentalBooking = ({ section, name, data ,carData,page,rentalBookData}) => {
                   onChange={(e) => setPickupTime(e.target.value)}
                   style={styles.input}
                 /> */}
-                 <select
-        id="pickupTime"
-        value={dropOffTime}
-        onChange={(e) => setPickupTime(e.target.value)}
-        style={styles.input}
-      >
-        <option value="">Select Time</option>
-        {timeSlots.map((time, index) => (
-          <option key={index} value={time}>
-            {time}
-          </option>
-        ))}
-      </select>
+                <select
+                  id="pickupTime"
+                  value={dropOffTime}
+                  onChange={(e) => setPickupTime(e.target.value)}
+                  style={styles.input}
+                >
+                  <option value="">Select Time</option>
+                  {timeSlots.map((time, index) => (
+                    <option key={index} value={time}>
+                      {time}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div style={styles.formGroup}>
-      <label htmlFor="dropOffTime">Drop Off Time</label>
-      <select
-        id="dropOffTime"
-        value={dropOffTime}
-        onChange={(e) => setDropOffTime(e.target.value)}
-        style={styles.input}
-      >
-        <option value="">Select Time</option>
-        {timeSlots.map((time, index) => (
-          <option key={index} value={time}>
-            {time}
-          </option>
-        ))}
-      </select>
-    </div>
+                <label htmlFor="dropOffTime">Drop Off Time</label>
+                <select
+                  id="dropOffTime"
+                  value={dropOffTime}
+                  onChange={(e) => setDropOffTime(e.target.value)}
+                  style={styles.input}
+                >
+                  <option value="">Select Time</option>
+                  {timeSlots.map((time, index) => (
+                    <option key={index} value={time}>
+                      {time}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             <div style={styles.bookNowForm}>
-            <div style={styles.formGroup}>
-  <label htmlFor="selectCar">Select Car</label>
-  <select
-    id="selectCar"
-    value={selectedCar}
-    onChange={(e) => setSelectedCar(e.target.value)}
-    style={styles.selectinput}
-  >
-    {/* Default option to show "Select Car" */}
-    
-    {/* Mapping carData to options */}
-    <option value="" disabled>Select Car</option>
-    {carData?.map((car, index) => (
-      <option key={index} value={car?.id}>
-        {car?.title}
-      </option>
-    ))}
-  </select>
-</div>
+              <div style={styles.formGroup}>
+                <label htmlFor="selectCar">Select Car</label>
+                <select
+                  id="selectCar"
+                  value={selectedCar}
+                  onChange={(e) => setSelectedCar(e.target.value)}
+                  style={styles.selectinput}
+                >
+                  {/* Default option to show "Select Car" */}
+
+                  {/* Mapping carData to options */}
+                  <option value="" disabled>Select Car</option>
+                  {carData?.map((car, index) => (
+                    <option key={index} value={car?.id}>
+                      {car?.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
               <div style={styles.formGroup}>
                 <label htmlFor="delivery">Delivery</label>
                 <select id="delivery" style={styles.input}
-                 value={delivery}
-                 onChange={(e) => setDelivery(+e.target.value)}
+                  value={delivery}
+                  onChange={(e) => setDelivery(+e.target.value)}
                 >
                   <option value={1}>Self Pickup</option>
                   <option value={2}>Home Delivery</option>
@@ -261,36 +258,36 @@ const RentalBooking = ({ section, name, data ,carData,page,rentalBookData}) => {
                   </span>
                 </span>
                 {
-                  isRedirectWhatsapp?
-                  <a
-                  href="https://wa.me/971527074847/?text= "
-                  style={{
-                    backgroundColor: "white",
-                    color: "black",
-                    borderRadius: "10px",
-                    textDecoration:"none"
-                  }}
-                  className=" book-btn py-2 px-4 border-0 mt-3 ms-2"
-                  type="submit"
-                  aria-label="Book Now"
-                >
-                  Book Now
-                </a>:
-                <button
-                style={{
-                  backgroundColor: "white",
-                  color: "black",
-                  borderRadius: "10px",
-                  textDecoration:"none"
-                }}
-                className=" book-btn py-2 px-4 border-0 mt-3 ms-2"
-                type="submit"
-                aria-label="Book Now"
-              >
-                Book Now
-              </button>
+                  isRedirectWhatsapp ?
+                    <a
+                      href="https://wa.me/971527074847/?text= "
+                      style={{
+                        backgroundColor: "white",
+                        color: "black",
+                        borderRadius: "10px",
+                        textDecoration: "none"
+                      }}
+                      className=" book-btn py-2 px-4 border-0 mt-3 ms-2"
+                      type="submit"
+                      aria-label="Book Now"
+                    >
+                      Book Now
+                    </a> :
+                    <button
+                      style={{
+                        backgroundColor: "white",
+                        color: "black",
+                        borderRadius: "10px",
+                        textDecoration: "none"
+                      }}
+                      className=" book-btn py-2 px-4 border-0 mt-3 ms-2"
+                      type="submit"
+                      aria-label="Book Now"
+                    >
+                      Book Now
+                    </button>
                 }
-                
+
               </div>
             </div>
           </form>
@@ -325,7 +322,7 @@ const styles = {
     minWidth: "200px",
   },
   input: {
-    height:"50px",
+    height: "50px",
     width: "100%",
     padding: "10px",
     marginTop: "5px",
@@ -333,7 +330,7 @@ const styles = {
     borderRadius: "4px",
     backgroundColor: "#fff",
     color: "#000",
-    height:"50px"
+    height: "50px"
   },
   unlimitedMilesGroup: {
     display: "flex",
@@ -366,7 +363,7 @@ const styles = {
     marginBottom: "20px",
   },
   selectinput: {
-    height:"50px",
+    height: "50px",
     width: "100%",
     padding: "10px",
     marginTop: "5px",
@@ -382,8 +379,8 @@ const styles = {
     WebkitAppearance: "none",  // Support for Safari
     MozAppearance: "none",     // Support for Firefox
   },
-  
-  
+
+
 
 
 };

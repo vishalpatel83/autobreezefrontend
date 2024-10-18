@@ -2,22 +2,23 @@ import React, { useEffect, useState } from "react";
 import { Navigation } from "../components/navigation";
 import Footer from "../components/footer";
 import Faq from "../components/faq";
-import { useLocation, useParams } from "react-router-dom";
+import {useParams } from "react-router-dom";
 import Breadcrumb from "../components/common/bredcum.component";
 import RentalBooking from "../components/carrentalbook";
 import KeyFeatures from "../components/cardetails/keyfeature.component";
 import useCarApi from "../api/usecarapi.hook";
 import { Head } from "../components/head";
+import { useSelector } from "react-redux";
 const CardDetail = ({ faq, data }) => {
   const { slug } = useParams();
   const [carData, setcarData] = useState(data)
   const id = +slug;
   const { fetchCarData } = useCarApi();
   const [rentalBookData, setrentalBookData] = useState({})
+  const bookInfo=useSelector(({car})=>car?.bookinfo)
   const [carDetail, setcarDetail] = useState(
     data?.find((item) => item?.id === id)
   );
-  const {state} = useLocation();
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -31,11 +32,11 @@ const CardDetail = ({ faq, data }) => {
 
   useEffect(() => {
     setcarData(data)
-    if(state){
-      setrentalBookData(state)
+    if(bookInfo){
+      setrentalBookData(bookInfo)
     }
     
-  }, [data,state])
+  }, [data,bookInfo])
   
 
   const [imageName, setimageName] = useState("")
